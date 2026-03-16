@@ -1,4 +1,4 @@
-from tools import read_issue, update_issue, search_issues
+from tools import read_issue, update_issue, search_issues, search_kb
 
 
 def simple_rule_based_resolution(issue_text: str) -> str:
@@ -64,6 +64,22 @@ def simple_rule_based_resolution(issue_text: str) -> str:
         "Please describe the issue in more detail or share screenshots if possible."
     )
 
+def kb_enhanced_resolution(issue_text: str) -> str:
+    """
+    Uses the knowledge base first. If a KB match is found,
+    return the KB resolution. Otherwise fall back to rule-based logic.
+    """
+    kb_matches = search_kb(issue_text)
+    print(f"KB matches found: {len(kb_matches)}")
+
+    if kb_matches:
+        # Use the first matching KB entry
+        kb = kb_matches[0]
+        return kb["ResolutionSteps"]
+
+    # Fallback to your existing rule-based logic
+    return simple_rule_based_resolution(issue_text)
+
 
 def handle_issue(issue_id: int) -> None:
     issue = read_issue(issue_id)
@@ -77,7 +93,7 @@ def handle_issue(issue_id: int) -> None:
     print(f"Current AgentSuggestedResolution: {issue.get('AgentSuggestedResolution', '')}\n")
 
     # Agent "reasoning"
-    suggested_resolution = simple_rule_based_resolution(issue["IssueText"])
+    suggested_resolution = kb_enhanced_resolution(issue["IssueText"])
     new_status = "Resolved"
 
     print("=== Agent Suggested Resolution ===")
