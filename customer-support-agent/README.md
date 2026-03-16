@@ -17,14 +17,12 @@ CLI interface for interacting with issues
 Local execution — runs entirely on your laptop
 
 **Project Structure**
+```text
 customer-support-agent/
-│
 ├── customer.xlsx              # 1000 synthetic customer issues
 ├── knowledge_base.xlsx        # Issue types, keywords, resolutions
-│
 ├── tools.py                   # Excel read/write + KB retrieval functions
 ├── main.py                    # Agent workflow + CLI
-│
 ├── .env                       # API keys (optional for future LLM use)
 ├── requirements.txt           # Python dependencies
 └── README.md                  # Project documentation
@@ -85,10 +83,10 @@ Implemented KB retrieval logic
 Implemented rule‑based fallback reasoning
 Built CLI agent (main.py)
 Added Excel write‑back functionality
+Added Streamlit UI
 
 **Future Enhancements**
 Replace rule‑based logic with LLM reasoning
 Add multi‑step agent planning
-Add Streamlit UI
 Add logging + traceability
 Expand knowledge base
