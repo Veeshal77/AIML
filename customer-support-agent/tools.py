@@ -3,6 +3,32 @@ from pathlib import Path
 
 EXCEL_PATH = Path(__file__).parent / "customer.xlsx"
 SHEET_NAME = "Sheet1"  # change if your sheet has a different name
+KB_PATH = Path(__file__).parent / "knowledge_base.xlsx"
+
+def load_kb() -> pd.DataFrame:
+    if not KB_PATH.exists():
+        raise FileNotFoundError(f"Knowledge base file not found at {KB_PATH}")
+    df = pd.read_excel(KB_PATH)
+    df["IssueType"] = df["IssueType"].astype("string")
+    df["Symptoms"] = df["Symptoms"].astype("string")
+    df["ResolutionSteps"] = df["ResolutionSteps"].astype("string")
+    return df
+
+
+def search_kb(issue_text: str) -> list[dict]:
+    """
+    Returns KB entries whose Symptoms keywords appear in the issue text.
+    """
+    df = load_kb()
+    text = issue_text.lower()
+
+    matches = []
+    for _, row in df.iterrows():
+        keywords = [k.strip() for k in row["Symptoms"].split(",")]
+        if any(k in text for k in keywords):
+            matches.append(row.to_dict())
+
+    return matches
 
 
 def load_dataframe() -> pd.DataFrame:
@@ -48,6 +74,7 @@ def update_issue(issue_id: int, resolution: str, status: str = "Resolved") -> bo
     Update AgentSuggestedResolution and Status for a given IssueId.
     Returns True if updated, False if IssueId not found.
     """
+    print(f"\n\n **Updating IssueId {issue_id} with resolution: {resolution} and status: {status}**\n\n")
     df = load_dataframe()
     idx = df.index[df["IssueId"] == issue_id]
     if len(idx) == 0:
@@ -57,10 +84,10 @@ def update_issue(issue_id: int, resolution: str, status: str = "Resolved") -> bo
 
     df.loc[idx,"AgentSuggestedResolution"] = resolution
 
-    print("\n\n **HERE**\n\n")
+    #print("\n\n **HERE**\n\n") -- uncomment for debugging
 
     df.loc[idx,"Status"] = status
-    print("\n\n **NOW HERE**\n\n")
+    #print("\n\n **NOW HERE**\n\n")  -- uncomment for debugging
 
     save_dataframe(df)
     return True
