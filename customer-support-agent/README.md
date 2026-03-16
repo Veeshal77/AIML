@@ -42,8 +42,8 @@ Allows user confirmation before updating
 
 **Setup Instructions**
 1. Clone the repository
-2. git clone https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
+2. git clone https://github.com/Veeshal77/AIML.git
+cd AIML
 
 2. Create a virtual environment
 python -m venv agent-env
